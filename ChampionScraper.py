@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 
 from dataClasses.Champion import Champion
 
+baseURL = 'https://leagueoflegends.fandom.com'
 championsURL = "https://leagueoflegends.fandom.com/es/wiki/Lista_de_campeones"
 
 class ChampionScraper:
@@ -24,8 +25,12 @@ class ChampionScraper:
 	def parseChampion(self, championSoup: BeautifulSoup) -> 'Champion':
 		championCells: List[BeautifulSoup] = championSoup.find_all('td')
 		championName = championCells[0].text
-		return Champion(championName)
+		championLinks = championSoup.find_all('a')
+		championDetailsURL = "{}{}".format(baseURL, championLinks[1]['href'])
+
+		return Champion(championName, championDetailsURL)
+
 
 if __name__ == '__main__':
 	for champ in ChampionScraper().requestAndObtainParsedChampions():
-		print(champ.name)
+		print(champ.name, champ.url)
