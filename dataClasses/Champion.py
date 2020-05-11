@@ -12,5 +12,5 @@ class Champion:
 		self.name = name
 		self.url = url
 		self.category = category
-		self.attackRange = attackRange,
+		self.attackRange = attackRange
 		self.movementSpeed = movementSpeed
