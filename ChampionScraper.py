@@ -10,6 +10,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from dataClasses.Champion import Champion
+from services.ChampionService import ChampionService
 
 baseURL = 'https://leagueoflegends.fandom.com'
 championsURL = "https://leagueoflegends.fandom.com/es/wiki/Lista_de_campeones"
@@ -100,7 +101,9 @@ class ChampionScraper:
 
 
 if __name__ == '__main__':
+	championService = ChampionService()
 	for champ in ChampionScraper().requestAndObtainParsedChampions():
 		print(champ.name, champ.url, champ.category,
 			  champ.attackRange, champ.movementSpeed,
 			  champ.style, champ.difficulty)
+		championService.save(champ)
