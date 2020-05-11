@@ -1,3 +1,4 @@
+import re
 from typing import List, Iterator
 
 import requests
@@ -57,13 +58,16 @@ class ChampionScraper:
 			championDifficulty = tableData[0].find(
 				'div', {'data-source': 'difficulty'}
 			).find('div', {'style': 'cursor:help;'})['title']
+			difficulty = re.findall('[0-9]+', championDifficulty)[0]
 
 			return Champion(
 				name,
 				championDetailsURL,
 				category,
 				int(attackRange),
-				int(movementSpeed)
+				int(movementSpeed),
+				int(championStyle),
+				int(difficulty)
 			)
 		except TimeoutException:
 			print("Loading took too much time!")
@@ -73,4 +77,5 @@ class ChampionScraper:
 if __name__ == '__main__':
 	for champ in ChampionScraper().requestAndObtainParsedChampions():
 		print(champ.name, champ.url, champ.category,
-			  champ.attackRange, champ.movementSpeed)
+			  champ.attackRange, champ.movementSpeed,
+			  champ.style, champ.difficulty)
