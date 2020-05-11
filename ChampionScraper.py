@@ -48,11 +48,17 @@ class ChampionScraper:
 			tableData = detailsFromTable \
 				.find('div', {"data-tab-body": "flytabs_00"}) \
 				.find_all('aside')
+			movementSpeed = tableData[1].find(
+				'div', {'data-source': 'ms'}).find('span').text
 			attackRange = tableData[1].find(
-				'span',
-				id=lambda idAttr: idAttr is not None and "attackrange_" in idAttr.lower()
+				'div', {'data-source': 'range'}).find('span').text
+			return Champion(
+				name,
+				championDetailsURL,
+				category,
+				int(attackRange),
+				int(movementSpeed)
 			)
-			return Champion(name, championDetailsURL, category)
 		except TimeoutException:
 			print("Loading took too much time!")
 
