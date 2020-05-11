@@ -43,22 +43,16 @@ class ChampionScraper:
 			flyTabs = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.ID, 'flytabs_0-content-wrapper')))
 			generalDetails: BeautifulSoup = BeautifulSoup(driver.page_source, "html.parser")
 			detailsFromTable: BeautifulSoup = BeautifulSoup(flyTabs.get_attribute('innerHTML'), "html.parser")
-			name = generalDetails.find('h1', {'class': 'page-header__title'}).text.lower()
-			category = generalDetails.find('a', {'class': 'mw-redirect'}).text.lower()
 			tableData = detailsFromTable \
 				.find('div', {"data-tab-body": "flytabs_00"}) \
 				.find_all('aside')
-			movementSpeed = tableData[1].find(
-				'div', {'data-source': 'ms'}).find('span').text
-			attackRange = tableData[1].find(
-				'div', {'data-source': 'range'}).find('span').text
-			championStyle = tableData[0].find(
-				'div', {'data-source': 'style'}
-			).find_all('span')[1]['title']
-			championDifficulty = tableData[0].find(
-				'div', {'data-source': 'difficulty'}
-			).find('div', {'style': 'cursor:help;'})['title']
-			difficulty = re.findall('[0-9]+', championDifficulty)[0]
+
+			name = self.getChampionName(generalDetails)
+			category = self.getChampionCategory(generalDetails)
+			movementSpeed = self.getMovementSpeed(tableData[1])
+			attackRange = self.getAttackRange(tableData[1])
+			championStyle = self.getChampionStyle(tableData[0])
+			difficulty = self.getDifficulty(tableData[0])
 
 			return Champion(
 				name,
@@ -72,6 +66,37 @@ class ChampionScraper:
 		except TimeoutException:
 			print("Loading took too much time!")
 			exit()
+
+	@classmethod
+	def getDifficulty(cls, table: BeautifulSoup):
+		championDifficulty = table.find(
+				'div', {'data-source': 'difficulty'}
+			).find('div', {'style': 'cursor:help;'})['title']
+		return re.findall('[0-9]+', championDifficulty)[0]
+
+	@classmethod
+	def getChampionStyle(cls, table: BeautifulSoup):
+		return table.find(
+				'div', {'data-source': 'style'}
+			).find_all('span')[1]['title']
+
+	@classmethod
+	def getAttackRange(cls, table: BeautifulSoup):
+		return table.find(
+				'div', {'data-source': 'range'}).find('span').text
+
+	@classmethod
+	def getMovementSpeed(cls, table: BeautifulSoup):
+		return table.find(
+				'div', {'data-source': 'ms'}).find('span').text
+
+	@classmethod
+	def getChampionName(cls, generalDetails: BeautifulSoup):
+		return generalDetails.find('h1', {'class': 'page-header__title'}).text.lower()
+
+	@classmethod
+	def getChampionCategory(cls, generalDetails: BeautifulSoup):
+		return generalDetails.find('a', {'class': 'mw-redirect'}).text.lower()
 
 
 if __name__ == '__main__':
