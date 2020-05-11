@@ -13,7 +13,7 @@ from dataClasses.Champion import Champion
 from services.ChampionService import ChampionService
 
 baseURL = 'https://leagueoflegends.fandom.com'
-championsURL = "https://leagueoflegends.fandom.com/es/wiki/Lista_de_campeones"
+championsURL = "https://leagueoflegends.fandom.com/wiki/List_of_champions"
 
 class ChampionScraper:
 
