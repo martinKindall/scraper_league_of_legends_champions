@@ -2,6 +2,11 @@ from typing import List, Iterator
 
 import requests
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from dataClasses.Champion import Champion
 
@@ -29,12 +34,27 @@ class ChampionScraper:
 		return self.parseChamptionDetails(championDetailsURL)
 
 	def parseChamptionDetails(self, championDetailsURL: str) -> 'Champion':
-		response = requests.get(championDetailsURL, timeout=10)
-		details: BeautifulSoup = BeautifulSoup(response.content, "html.parser")
-		name = details.find('h1', {'class': 'page-header__title'}).text.lower()
-		category = details.find('a', {'class': 'mw-redirect'}).text.lower()
-
-		return Champion(name, championDetailsURL, category)
+		driver = webdriver.Chrome(
+			executable_path=r'C:\\webdrivers\\chromedriver.exe'
+		)
+		driver.get(championDetailsURL)
+		delay = 20
+		try:
+			flyTabs = WebDriverWait(driver, delay).until(EC.presence_of_element_located((By.ID, 'flytabs_0-content-wrapper')))
+			generalDetails: BeautifulSoup = BeautifulSoup(driver.page_source, "html.parser")
+			detailsFromTable: BeautifulSoup = BeautifulSoup(flyTabs.get_attribute('innerHTML'), "html.parser")
+			name = generalDetails.find('h1', {'class': 'page-header__title'}).text.lower()
+			category = generalDetails.find('a', {'class': 'mw-redirect'}).text.lower()
+			tableData = detailsFromTable \
+				.find('div', {"data-tab-body": "flytabs_00"}) \
+				.find_all('aside')
+			attackRange = tableData[1].find(
+				'span',
+				id=lambda idAttr: idAttr is not None and "attackrange_" in idAttr.lower()
+			)
+			return Champion(name, championDetailsURL, category)
+		except TimeoutException:
+			print("Loading took too much time!")
 
 
 if __name__ == '__main__':
