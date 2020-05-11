@@ -51,6 +51,13 @@ class ChampionScraper:
 				'div', {'data-source': 'ms'}).find('span').text
 			attackRange = tableData[1].find(
 				'div', {'data-source': 'range'}).find('span').text
+			championStyle = tableData[0].find(
+				'div', {'data-source': 'style'}
+			).find_all('span')[1]['title']
+			championDifficulty = tableData[0].find(
+				'div', {'data-source': 'difficulty'}
+			).find('div', {'style': 'cursor:help;'})['title']
+
 			return Champion(
 				name,
 				championDetailsURL,
@@ -60,6 +67,7 @@ class ChampionScraper:
 			)
 		except TimeoutException:
 			print("Loading took too much time!")
+			exit()
 
 
 if __name__ == '__main__':
