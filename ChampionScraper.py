@@ -68,34 +68,34 @@ class ChampionScraper:
 			exit()
 
 	@classmethod
-	def getDifficulty(cls, table: BeautifulSoup):
+	def getDifficulty(cls, table: BeautifulSoup) -> str:
 		championDifficulty = table.find(
 				'div', {'data-source': 'difficulty'}
 			).find('div', {'style': 'cursor:help;'})['title']
 		return re.findall('[0-9]+', championDifficulty)[0]
 
 	@classmethod
-	def getChampionStyle(cls, table: BeautifulSoup):
+	def getChampionStyle(cls, table: BeautifulSoup) -> str:
 		return table.find(
 				'div', {'data-source': 'style'}
 			).find_all('span')[1]['title']
 
 	@classmethod
-	def getAttackRange(cls, table: BeautifulSoup):
+	def getAttackRange(cls, table: BeautifulSoup) -> str:
 		return table.find(
 				'div', {'data-source': 'range'}).find('span').text
 
 	@classmethod
-	def getMovementSpeed(cls, table: BeautifulSoup):
+	def getMovementSpeed(cls, table: BeautifulSoup) -> str:
 		return table.find(
 				'div', {'data-source': 'ms'}).find('span').text
 
 	@classmethod
-	def getChampionName(cls, generalDetails: BeautifulSoup):
+	def getChampionName(cls, generalDetails: BeautifulSoup) -> str:
 		return generalDetails.find('h1', {'class': 'page-header__title'}).text.lower()
 
 	@classmethod
-	def getChampionCategory(cls, generalDetails: BeautifulSoup):
+	def getChampionCategory(cls, generalDetails: BeautifulSoup) -> str:
 		return generalDetails.find('a', {'class': 'mw-redirect'}).text.lower()
 
 
