@@ -5,6 +5,7 @@ chardet==3.0.4
 idna==2.9
 mysql-connector-python==8.0.20
 protobuf==3.11.3
+python-dotenv==0.13.0
 requests==2.23.0
 selenium==3.141.0
 six==1.14.0

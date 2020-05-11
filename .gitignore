@@ -1,3 +1,4 @@
 .idea/
 virtualenv/
 __pycache__/
+.env
