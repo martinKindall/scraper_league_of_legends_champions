@@ -21,22 +21,22 @@ class ChampionScraper:
 		championsList: List[BeautifulSoup] = \
 			content.find('table', {'class': 'sortable'})\
 			.find_all('tr')[1:]
-
-		return map(
-			self.parseChampion,
-			championsList
-		)
-
-	def parseChampion(self, championSoup: BeautifulSoup) -> 'Champion':
-		championCells: List[BeautifulSoup] = championSoup.find_all('td')
-		championLinks = championSoup.find_all('a')
-		championDetailsURL = "{}{}".format(baseURL, championLinks[1]['href'])
-		return self.parseChamptionDetails(championDetailsURL)
-
-	def parseChamptionDetails(self, championDetailsURL: str) -> 'Champion':
 		driver = webdriver.Chrome(
 			executable_path=r'C:\\webdrivers\\chromedriver.exe'
 		)
+
+		return map(
+			lambda championRaw: self.parseChampion(championRaw, driver),
+			championsList
+		)
+
+	def parseChampion(self, championSoup: BeautifulSoup, driver) -> 'Champion':
+		championCells: List[BeautifulSoup] = championSoup.find_all('td')
+		championLinks = championSoup.find_all('a')
+		championDetailsURL = "{}{}".format(baseURL, championLinks[1]['href'])
+		return self.parseChamptionDetails(championDetailsURL, driver)
+
+	def parseChamptionDetails(self, championDetailsURL: str, driver) -> 'Champion':
 		driver.get(championDetailsURL)
 		delay = 20
 		try:
@@ -65,4 +65,5 @@ class ChampionScraper:
 
 if __name__ == '__main__':
 	for champ in ChampionScraper().requestAndObtainParsedChampions():
-		print(champ.name, champ.url, champ.category)
+		print(champ.name, champ.url, champ.category,
+			  champ.attackRange, champ.movementSpeed)
