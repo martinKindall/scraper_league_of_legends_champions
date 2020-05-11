@@ -31,7 +31,6 @@ class ChampionScraper:
 		)
 
 	def parseChampion(self, championSoup: BeautifulSoup, driver) -> 'Champion':
-		championCells: List[BeautifulSoup] = championSoup.find_all('td')
 		championLinks = championSoup.find_all('a')
 		championDetailsURL = "{}{}".format(baseURL, championLinks[1]['href'])
 		return self.parseChamptionDetails(championDetailsURL, driver)
