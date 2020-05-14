@@ -34,10 +34,18 @@ class ChampionScraper:
 
 	def parseChampion(self, championSoup: BeautifulSoup, driver) -> 'Champion':
 		championLinks = championSoup.find_all('a')
+		championCategory = self.getChampionCategory(championSoup)
 		championDetailsURL = "{}{}".format(baseURL, championLinks[1]['href'])
-		return self.parseChamptionDetails(championDetailsURL, driver)
+		return self.parseChamptionDetails(
+			championCategory,
+			championDetailsURL,
+			driver)
 
-	def parseChamptionDetails(self, championDetailsURL: str, driver) -> 'Champion':
+	def parseChamptionDetails(
+			self,
+			championCategory: str,
+			championDetailsURL: str,
+			driver) -> 'Champion':
 		driver.get(championDetailsURL)
 		delay = 20
 		try:
@@ -49,7 +57,6 @@ class ChampionScraper:
 				.find_all('aside')
 
 			name = self.getChampionName(generalDetails)
-			category = self.getChampionCategory(generalDetails)
 			movementSpeed = self.getMovementSpeed(tableData[1])
 			attackRange = self.getAttackRange(tableData[1])
 			championStyle = self.getChampionStyle(tableData[0])
@@ -58,7 +65,7 @@ class ChampionScraper:
 			return Champion(
 				name,
 				championDetailsURL,
-				category,
+				championCategory,
 				int(attackRange),
 				int(movementSpeed),
 				int(championStyle),
@@ -96,8 +103,8 @@ class ChampionScraper:
 		return generalDetails.find('h1', {'class': 'page-header__title'}).text.lower()
 
 	@classmethod
-	def getChampionCategory(cls, generalDetails: BeautifulSoup) -> str:
-		return generalDetails.find('a', {'class': 'mw-redirect'}).text.lower()
+	def getChampionCategory(cls, championSoup: BeautifulSoup) -> str:
+		return championSoup.find_all('td')[1]['data-sort-value'].lower()
 
 
 if __name__ == '__main__':

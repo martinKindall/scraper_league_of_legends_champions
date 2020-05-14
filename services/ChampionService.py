@@ -5,7 +5,6 @@ import os
 
 load_dotenv()
 
-
 if typing.TYPE_CHECKING:
 	from dataClasses.Champion import Champion
 
